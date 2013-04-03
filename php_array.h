@@ -30,11 +30,11 @@
  * php_array_{$verb}{$modifier}_{$type}(zval *zarr, ...)
  *
  * $verb is one of:
- *   exists   - Boolean check whether the array offset exists
- *   fetch    - Retreive the value at $zarr[$key]
- *   unset    - Delete the named offset from the array
+ *   exists       - Boolean check whether the array offset exists
+ *   fetch        - Retrieve the value at $zarr[$key]
+ *   unset        - Delete the named offset from the array
  *
- * $modifier specifies what type off offset (key) is being used:
+ * $modifier specifies what type of offset (key) is being used:
  *   <no modifer> - NULL terminated string variable, unknown length
  *   l            - NULL terminated string variable, known length
  *   l_safe       - String variable of known length, not necessarily NULL terminated
@@ -44,18 +44,18 @@
  *
  * $type is specific to the "fetch" verb:
  *   <no type>    - Fetch a zval* of any type
- *   bool         - Fetch a zend_bool (converting as needed)
- *   long         - Fetch a long (converting as needed)
- *   double       - Fetch a double (converting as needed)
- *   string       - Fetch a string (converting as needed, caller may need to free)
- *   array        - Fetch an array (no conversion from other types)
- *   object       - Fetch an object (no conversion, type spec optional)
- *   resource     - Fetch a resource (no conversion, type spec mandatory)
+ *   bool         - Fetch a zend_bool         (converting as needed)
+ *   long         - Fetch a long              (converting as needed)
+ *   double       - Fetch a double            (converting as needed)
+ *   string       - Fetch a string            (converting as needed, caller may need to free)
+ *   array        - Fetch an array            (no conversion from other types)
+ *   object       - Fetch an object           (no conversion, type spec optional)
+ *   resource     - Fetch a resource          (no conversion, type spec mandatory)
  *
  * See the specific subsection for additional details
  */
 
-/* isset($zarr[$key]) - Check for the existance of a key within an array
+/* isset($zarr[$key]) - Check for the existence of a key within an array
  *
  * zend_bool php_array_exists(zval *zarr, const char *key)
  * zend_bool php_array_existsc(zval *zarr, const char *litstr)
@@ -104,10 +104,10 @@ zend_bool php_array_existsz(zval *zarr, zval *key) {
  *
  * Methods returning pointers yield NULL on key not existing,
  * others yield 0, false, etc... as appropriate.
- * Callers needing to distinguish empty scalars from non-existant
+ * Callers needing to distinguish empty scalars from non-existent
  * scalars should use php_array_exists*() or fetch the zval then convert.
  *
- * If the type of the value does match match what is requested
+ * If the type of the value does not match what is requested
  * it will be implicitly converted (if possible).
  *
  * See each type section for specific prototypes
@@ -123,17 +123,17 @@ zend_bool php_array_existsz(zval *zarr, zval *key) {
  *
  * For each result type, there are six key forms:
  *   php_array_fetch_T(zval *zarr, const char *key, ...)
- *     NULL terminated string key
+ *       NULL terminated string key
  *   php_array_fetchc_T(zval *zarr, const char *litkey, ...)
- *     String literal key
+ *       String literal key
  *   php_array_fetchl_T(zval *zarr, const char *key, int key_len, ...)
- *     NULL terminated string key of known length
+ *       NULL terminated string key of known length
  *   php_array_fetchl_safe_T(zval *zarr, const char *key, int key_len, ...)
- *     String key of known length, may not be NULL terminated
+ *       String key of known length, may not be NULL terminated
  *   php_array_fetchn_T(zval *zarr, long idx, ...)
- *     Numeric key
+ *       Numeric key
  *   php_array_fetchz_T(zval *zarr, zval *key, ...)
- *     zval* key
+ *       zval* key
  */
 
 /* Fetch zval*
