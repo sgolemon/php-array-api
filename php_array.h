@@ -516,7 +516,7 @@ void php_array_unsetl_safe(zval *zarr, const char *key, int key_len) {
 #define php_array_unsetn(zarr, idx) \
 	zend_symtable_index_del(Z_ARRVAL_P(zarr), idx)
 #define php_array_unsetc(zarr, litstr) \
-	zend_symtable_del(Z_ARRVAL_P(zarr), litstr, PAA_LENGTH_ADJ(sizeof(litstr) - 1))
+	PAA_SYM_DEL(Z_ARRVAL_P(zarr), litstr, PAA_LENGTH_ADJ(sizeof(litstr) - 1))
 static inline void php_array_unsetz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {
 		case IS_NULL:
