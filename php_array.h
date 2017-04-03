@@ -355,13 +355,10 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 	*plen = 0;
 	*pfree = 0;
 	if (!z) { return NULL; }
-	*pfree = 1;
 	switch (Z_TYPE_P(z)) {
 		case IS_NULL:
-			*pfree = 0;
-			return "";
+			return (char *)"";
 		case IS_STRING:
-			*pfree = 0;
 			*plen = Z_STRLEN_P(z);
 			return Z_STRVAL_P(z);
 		default:
@@ -369,6 +366,11 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
 			zval c = *z;
 			zval_copy_ctor(&c);
 			convert_to_string(&c);
+#ifdef ZEND_ENGINE_3
+			*pfree = ! IS_INTERNED(Z_STR(c));
+#else
+			*pfree = ! IS_INTERNED(Z_STRVAL(c));
+#endif
 			*plen = Z_STRLEN(c);
 			return Z_STRVAL(c);
 		}
@@ -516,7 +518,7 @@ void php_array_unsetl_safe(zval *zarr, const char *key, int key_len) {
 #define php_array_unsetn(zarr, idx) \
 	zend_symtable_index_del(Z_ARRVAL_P(zarr), idx)
 #define php_array_unsetc(zarr, litstr) \
-	zend_symtable_del(Z_ARRVAL_P(zarr), litstr, PAA_LENGTH_ADJ(sizeof(litstr) - 1))
+	PAA_SYM_DEL(Z_ARRVAL_P(zarr), litstr, PAA_LENGTH_ADJ(sizeof(litstr) - 1))
 static inline void php_array_unsetz(zval *zarr, zval *key) {
 	switch (Z_TYPE_P(key)) {
 		case IS_NULL:
