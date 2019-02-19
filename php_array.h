@@ -30,11 +30,13 @@
 # define PAA_SYM_EXISTS zend_symtable_str_exists
 # define PAA_SYM_DEL    zend_symtable_str_del
 # define PAA_LONG       zend_long
+# define PAA_ULONG      zend_ulong
 #else
 # define PAA_LENGTH_ADJ(l) (l+1)
 # define PAA_SYM_EXISTS zend_symtable_exists
 # define PAA_SYM_DEL    zend_symtable_del
 # define PAA_LONG       long
+# define PAA_ULONG      ulong
 #endif
 
 /**
@@ -74,7 +76,7 @@
  * zend_bool php_array_existsc(zval *zarr, const char *litstr)
  * zend_bool php_array_existsl(zval *zarr, const char *key, int key_len)
  * zend_bool php_array_existsl_safe(zval *zarr, const char *key, int key_len)
- * zend_bool php_array_existsn(zval *zarr, long idx)
+ * zend_bool php_array_existsn(zval *zarr, unsigned long idx)
  * zend_bool php_array_existsz(zval *zarr, zval *key)
  */
 static inline
@@ -155,7 +157,7 @@ zend_bool php_array_existsz(zval *zarr, zval *key) {
  *       NULL terminated string key of known length
  *   php_array_fetchl_safe_T(zval *zarr, const char *key, int key_len, ...)
  *       String key of known length, may not be NULL terminated
- *   php_array_fetchn_T(zval *zarr, long idx, ...)
+ *   php_array_fetchn_T(zval *zarr, unsigned long idx, ...)
  *       Numeric key
  *   php_array_fetchz_T(zval *zarr, zval *key, ...)
  *       zval* key
@@ -166,7 +168,7 @@ zend_bool php_array_existsz(zval *zarr, zval *key) {
  * zval *php_array_fetch(zval *zarr, const char *key)
  * zval *php_array_fetchl(zval *zarr, const char *key, int key_len)
  * zval *php_array_fetchl_safe(zval *zarr, const char *key, int key_len)
- * zval *php_array_fetchn(zval *zarr, long idx)
+ * zval *php_array_fetchn(zval *zarr, unsigned long idx)
  * zval *php_array_fetchc(zval *zarr, const char *litstr)
  * zval *php_array_fetchz(zval *zarr, zval *key)
  */
@@ -203,7 +205,7 @@ zval *php_array_fetchl_safe(zval *zarr, const char *key, int key_len) {
 	return ret;
 }
 static inline
-zval *php_array_fetchn(zval *zarr, long idx) {
+zval *php_array_fetchn(zval *zarr, PAA_ULONG idx) {
 #ifdef ZEND_ENGINE_3
 	return zend_hash_index_find(Z_ARRVAL_P(zarr), idx);
 #else
@@ -246,7 +248,7 @@ static inline ctype php_array_fetchl_##ztype(zval *zarr, const char *key, int ke
 	{ return php_array_zval_to_##ztype(php_array_fetchl(zarr, key, key_len)); } \
 static inline ctype php_array_fetchl_safe_##ztype(zval *zarr, const char *key, int key_len) \
 	{ return php_array_zval_to_##ztype(php_array_fetchl_safe(zarr, key, key_len)); } \
-static inline ctype php_array_fetchn_##ztype(zval *zarr, long idx) \
+static inline ctype php_array_fetchn_##ztype(zval *zarr, PAA_ULONG idx) \
 	{ return php_array_zval_to_##ztype(php_array_fetchn(zarr, idx)); } \
 static inline ctype php_array_fetchz_##ztype(zval *zarr, zval *key) \
 	{ return php_array_zval_to_##ztype(php_array_fetchz(zarr, key)); }
@@ -256,7 +258,7 @@ static inline ctype php_array_fetchz_##ztype(zval *zarr, zval *key) \
  * zend_bool php_array_fetch_bool(zval *zarr, const char *key)
  * zend_bool php_array_fetchl_bool(zval *zarr, const char *key, int key_len)
  * zend_bool php_array_fetchl_safe_bool(zval *zarr, const char *key, int key_len)
- * zend_bool php_array_fetchn_bool(zval *zarr, long idx)
+ * zend_bool php_array_fetchn_bool(zval *zarr, unsigned long idx)
  * zend_bool php_array_fetchc_bool(zval *zarr, const char *litstr)
  * zend_bool php_array_fetchz_bool(zval *zarr, zval *key)
  */
@@ -273,7 +275,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(zend_bool, bool)
  * long php_array_fetch_long(zval *zarr, const char *key)
  * long php_array_fetchl_long(zval *zarr, const char *key, int key_len)
  * long php_array_fetchl_safe_long(zval *zarr, const char *key, int key_len)
- * long php_array_fetchn_long(zval *zarr, long idx)
+ * long php_array_fetchn_long(zval *zarr, unsigned long idx)
  * long php_array_fetchc_long(zval *zarr, const char *litstr)
  * long php_array_fetchz_long(zval *zarr, zval *key)
  */
@@ -308,7 +310,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(PAA_LONG, long)
  * double php_array_fetch_double(zval *zarr, const char *key)
  * double php_array_fetchl_double(zval *zarr, const char *key, int key_len)
  * double php_array_fetchl_safe_double(zval *zarr, const char *key, int key_len)
- * double php_array_fetchn_double(zval *zarr, long idx)
+ * double php_array_fetchn_double(zval *zarr, unsigned long idx)
  * double php_array_fetchc_double(zval *zarr, const char *litstr)
  * double php_array_fetchz_double(zval *zarr, zval *key)
  */
@@ -348,7 +350,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(double, double)
  * char *php_array_fetch_string(zval *zarr, const char *key, int *plen, zend_bool *pfree)
  * char *php_array_fetchl_string(zval *zarr, const char *key, int key_len, int *plen, zend_bool *pfree)
  * char *php_array_fetchl_safe_string(zval *zarr, const char *key, int key_len, int *plen, zend_bool *pfree)
- * char *php_array_fetchn_string(zval *zarr, long idx, int *plen, zend_bool *pfree)
+ * char *php_array_fetchn_string(zval *zarr, unsigned long idx, int *plen, zend_bool *pfree)
  * char *php_array_fetchc_string(zval *zarr, const char *litstr, int *plen, zend_bool *pfree)
  * char *php_array_fetchz_string(zval *zarr, zval *key, int *plen, zend_bool *pfree)
  */
@@ -402,7 +404,7 @@ char *php_array_zval_to_string(zval *z, int *plen, zend_bool *pfree) {
  * zval *php_array_fetch_array(zval *zarr, const char *key)
  * zval *php_array_fetchl_array(zval *zarr, const char *key, int key_len)
  * zval *php_array_fetchl_safe_array(zval *zarr, const char *key, int key_len)
- * zval *php_array_fetchn_array(zval *zarr, long idx)
+ * zval *php_array_fetchn_array(zval *zarr, unsigned long idx)
  * zval *php_array_fetchc_array(zval *zarr, const char *litstr)
  * zval *php_array_fetchz_array(zval *zarr, zval *key)
  */
@@ -433,7 +435,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(zval*, array)
  * zval *php_array_fetch_resource(zval *zarr, const char *key, int le)
  * zval *php_array_fetchl_resource(zval *zarr, const char *key, int key_len, int le)
  * zval *php_array_fetchl_safe_resource(zval *zarr, const char *key, int key_len, int le)
- * zval *php_array_fetchn_resource(zval *zarr, long idx, int le)
+ * zval *php_array_fetchn_resource(zval *zarr, unsigned long idx, int le)
  * zval *php_array_fetchc_resource(zval *zarr, const char *litstr, int le)
  * zval *php_array_fetchz_resource(zval *zarr, zval *key, int le)
  */
@@ -474,7 +476,7 @@ void *php_array_zval_to_resource(zval *z, int le TSRMLS_DC) {
  * zval *php_array_fetch_object(zval *zarr, const char *key, zend_class_entry *ce)
  * zval *php_array_fetchl_object(zval *zarr, const char *key, int key_len, zend_class_entry *ce)
  * zval *php_array_fetchl_safe_object(zval *zarr, const char *key, int key_len, zend_class_entry *ce)
- * zval *php_array_fetchn_object(zval *zarr, long idx, zend_class_entry *ce)
+ * zval *php_array_fetchn_object(zval *zarr, unsigned long idx, zend_class_entry *ce)
  * zval *php_array_fetchc_object(zval *zarr, const char *litstr, zend_class_entry *ce)
  * zval *php_array_fetchz_object(zval *zarr, zval *key, zend_class_entry *ce)
  */
