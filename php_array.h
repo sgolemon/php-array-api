@@ -29,10 +29,12 @@
 # define PAA_LENGTH_ADJ(l) (l)
 # define PAA_SYM_EXISTS zend_symtable_str_exists
 # define PAA_SYM_DEL    zend_symtable_str_del
+# define PAA_LONG       zend_long
 #else
 # define PAA_LENGTH_ADJ(l) (l+1)
 # define PAA_SYM_EXISTS zend_symtable_exists
 # define PAA_SYM_DEL    zend_symtable_del
+# define PAA_LONG       long
 #endif
 
 /**
@@ -276,7 +278,7 @@ PHP_ARRAY_FETCH_TYPE_MAP(zend_bool, bool)
  * long php_array_fetchz_long(zval *zarr, zval *key)
  */
 static inline
-long php_array_zval_to_long(zval *z) {
+PAA_LONG php_array_zval_to_long(zval *z) {
 	if (!z) { return 0; }
 	switch(Z_TYPE_P(z)) {
 		case IS_NULL: return 0;
@@ -297,7 +299,7 @@ long php_array_zval_to_long(zval *z) {
 		}
 	}
 }
-PHP_ARRAY_FETCH_TYPE_MAP(long, long)
+PHP_ARRAY_FETCH_TYPE_MAP(PAA_LONG, long)
 #define php_array_fetchc_long(zarr, litstr) \
 	php_array_zval_to_long(php_array_fetchc(zarr, litstr))
 
