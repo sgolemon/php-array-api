@@ -291,7 +291,6 @@ PAA_LONG php_array_zval_to_long(zval *z) {
 		case IS_BOOL: return Z_BVAL_P(z);
 #endif
 		case IS_LONG: return Z_LVAL_P(z);
-		case IS_DOUBLE: return (long)Z_DVAL_P(z);
 		default:
 		{
 			zval c = *z;
